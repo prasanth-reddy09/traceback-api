@@ -54,4 +54,41 @@ public class ClaimService {
     public List<Claim> getClaimsForItem(Long itemId) {
         return claimRepository.findByItemId(itemId);
     }
+    
+ // 3. Resolve a claim (Approve or Reject)
+    public Claim resolveClaim(Long claimId, Long finderId, String action) {
+        
+        Claim claim = claimRepository.findById(claimId)
+                .orElseThrow(() -> new RuntimeException("Claim not found!"));
+                
+        Item item = claim.getItem();
+
+        // 🛡️ SECURITY CHECK: Only the user who FOUND the item can approve/reject claims for it.
+        if (!item.getFinder().getId().equals(finderId)) {
+            throw new RuntimeException("Unauthorized: Only the finder can resolve this claim.");
+        }
+
+        if (action.equalsIgnoreCase("APPROVE")) {
+            claim.setStatus("APPROVED");
+            
+            // Mark the item as completely resolved
+            item.setStatus("RESOLVED");
+            itemRepository.save(item);
+
+            // Auto-reject any other people who tried to claim this same item
+            List<Claim> allClaims = claimRepository.findByItemId(item.getId());
+            for (Claim otherClaim : allClaims) {
+                if (!otherClaim.getId().equals(claimId)) {
+                    otherClaim.setStatus("REJECTED");
+                    claimRepository.save(otherClaim);
+                }
+            }
+        } else if (action.equalsIgnoreCase("REJECT")) {
+            claim.setStatus("REJECTED");
+        } else {
+            throw new RuntimeException("Invalid action. Please use 'APPROVE' or 'REJECT'.");
+        }
+
+        return claimRepository.save(claim);
+    }
 }

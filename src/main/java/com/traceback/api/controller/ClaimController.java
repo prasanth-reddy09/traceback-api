@@ -7,8 +7,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.traceback.api.dto.ClaimRequest;
@@ -39,5 +41,17 @@ public class ClaimController {
     @GetMapping("/item/{itemId}")
     public ResponseEntity<List<Claim>> getClaimsForItem(@PathVariable Long itemId) {
         return ResponseEntity.ok(claimService.getClaimsForItem(itemId));
+    }
+    
+ // 3. Resolve a claim (Approve or Reject)
+    // Example URL: PUT http://localhost:8080/api/claims/1/resolve?finderId=1&action=APPROVE
+    @PutMapping("/{claimId}/resolve")
+    public ResponseEntity<Claim> resolveClaim(
+            @PathVariable Long claimId,
+            @RequestParam Long finderId,
+            @RequestParam String action) {
+            
+        Claim resolvedClaim = claimService.resolveClaim(claimId, finderId, action);
+        return ResponseEntity.ok(resolvedClaim);
     }
 }
