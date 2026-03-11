@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.traceback.api.dto.AuthResponse;
+import com.traceback.api.dto.LoginRequest;
 import com.traceback.api.entity.User;
 import com.traceback.api.service.UserService;
 
@@ -26,4 +28,10 @@ public class UserController {
 		
 		return new ResponseEntity<>(savedUser,HttpStatus.CREATED);
 	}
+	
+
+    @PostMapping("/login")
+    public ResponseEntity<AuthResponse> loginUser(@RequestBody LoginRequest request) {
+        return ResponseEntity.ok(userService.loginUser(request));
+    }
 }
