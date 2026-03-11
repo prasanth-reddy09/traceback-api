@@ -2,8 +2,10 @@ package com.traceback.api.service;
 
 import java.util.List;
 
+import org.springframework.messaging.simp.SimpMessagingTemplate; // <-- The Megaphone!
 import org.springframework.stereotype.Service;
 
+import com.traceback.api.dto.MessageDto;
 import com.traceback.api.entity.Claim;
 import com.traceback.api.entity.Message;
 import com.traceback.api.entity.User;
@@ -20,6 +22,7 @@ public class MessageService {
     private final MessageRepository messageRepository;
     private final ClaimRepository claimRepository;
     private final UserRepository userRepository;
+    private final SimpMessagingTemplate messagingTemplate; // <-- Inject it here!
 
     public Message sendMessage(Long claimId, Long senderId, String content) {
         Claim claim = claimRepository.findById(claimId)
@@ -28,7 +31,7 @@ public class MessageService {
         User sender = userRepository.findById(senderId)
                 .orElseThrow(() -> new RuntimeException("User not found!"));
 
-        // 🛡️ SECURITY CHECK: Only the Finder or the Loser can send messages in this claim!
+        // Security check
         Long finderId = claim.getItem().getFinder().getId();
         Long loserId = claim.getLoser().getId();
 
@@ -36,14 +39,29 @@ public class MessageService {
             throw new RuntimeException("Unauthorized: You are not part of this private claim.");
         }
 
-        // Build and save the new message
+        // 1. Save to the database
         Message message = Message.builder()
                 .claim(claim)
                 .sender(sender)
                 .content(content)
                 .build();
+        Message savedMessage = messageRepository.save(message);
 
-        return messageRepository.save(message);
+        // 2. Build the lightweight DTO
+        MessageDto messageDto = MessageDto.builder()
+                .id(savedMessage.getId())
+                .claimId(claim.getId())
+                .senderId(sender.getId())
+                .senderName(sender.getName())
+                .content(savedMessage.getContent())
+                .sentAt(savedMessage.getSentAt())
+                .build();
+
+        // 3. BROADCAST TO THE RADIO STATION! 📻
+        // Anyone listening to "/topic/chat/{claimId}" will instantly get this JSON.
+        messagingTemplate.convertAndSend("/topic/chat/" + claimId, messageDto);
+
+        return savedMessage;
     }
 
     public List<Message> getChatHistory(Long claimId) {
