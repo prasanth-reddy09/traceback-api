@@ -30,7 +30,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         // Allow the Next.js frontend
-        configuration.setAllowedOrigins(List.of("http://localhost:3000","https://*.vercel.app")); 
+        configuration.setAllowedOrigins(List.of("http://localhost:3000","https://traceback-frontend-one.vercel.app")); 
         // Allow all standard HTTP methods
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         // Allow all headers (like our Authorization Bearer token!)
