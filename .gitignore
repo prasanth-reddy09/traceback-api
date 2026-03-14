@@ -34,7 +34,6 @@ build/
 
 
 # Ignore sensitive config
-application.properties
 .env
 .env.local
 target/
