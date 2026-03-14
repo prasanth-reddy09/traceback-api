@@ -14,7 +14,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // This is the URL the Next.js frontend will use to establish the tunnel
         registry.addEndpoint("/ws")
-                .setAllowedOriginPatterns("*") // Allow our frontend to connect
+                .setAllowedOriginPatterns("https://traceback-frontend-one.vercel.app", "http://localhost:3000") // Allow our frontend to connect
                 .withSockJS(); // Fallback for older browsers
     }
 
