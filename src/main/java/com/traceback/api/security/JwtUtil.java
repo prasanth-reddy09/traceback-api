@@ -3,6 +3,7 @@ package com.traceback.api.security;
 import java.security.Key;
 import java.util.Date;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Jwts;
@@ -17,7 +18,8 @@ public class JwtUtil {
 
     // 🔒 In a real company, this is hidden in environment variables! 
     // It must be at least 256-bit (32 characters) long.
-    private static final String SECRET_KEY = "TracebackSuperSecretKeyForJwtGenerationMustBeLongEnough!";
+	@Value("${app.jwt.secret}")
+    private String SECRET_KEY;
 
     // Converts our string key into a cryptographic Key object
     private Key getSignInKey() {
