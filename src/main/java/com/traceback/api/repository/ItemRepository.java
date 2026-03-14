@@ -18,5 +18,12 @@ public interface ItemRepository extends JpaRepository<Item, Long>{
 
     // 3. Search items by keyword in the title or location (Ignoring uppercase/lowercase)
     List<Item> findByTitleContainingIgnoreCaseOrLocationContainingIgnoreCase(String title, String location);
+    
+ // Updated search: Finds items matching keyword (title/location) AND category
+    List<Item> findByCategoryAndTitleContainingIgnoreCaseOrCategoryAndLocationContainingIgnoreCase(
+        String category1, String title, String category2, String location
+    );
+    
+    List<Item> findByFinderId(Long finderId);
 	
 }

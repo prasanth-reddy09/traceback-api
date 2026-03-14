@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.traceback.api.dto.ClaimRequest;
+import com.traceback.api.dto.ClaimResponseDTO;
 import com.traceback.api.entity.Claim;
 import com.traceback.api.service.ClaimService;
 
@@ -53,5 +54,15 @@ public class ClaimController {
             
         Claim resolvedClaim = claimService.resolveClaim(claimId, finderId, action);
         return ResponseEntity.ok(resolvedClaim);
+    }
+    
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<ClaimResponseDTO>> getClaimsByUser(@PathVariable Long userId) {
+        return ResponseEntity.ok(claimService.getClaimsByLoserId(userId));
+    }
+    
+    @GetMapping("/finder/{finderId}")
+    public ResponseEntity<List<ClaimResponseDTO>> getClaimsForFinder(@PathVariable Long finderId) {
+        return ResponseEntity.ok(claimService.getClaimsForFinder(finderId));
     }
 }

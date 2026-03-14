@@ -26,6 +26,8 @@ public class UserController {
 		
 		User savedUser = userService.registerUser(user);
 		
+		System.out.println(user.getPasswordHash() + "from controller");
+		
 		return new ResponseEntity<>(savedUser,HttpStatus.CREATED);
 	}
 	

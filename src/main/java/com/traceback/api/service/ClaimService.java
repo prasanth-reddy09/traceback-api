@@ -1,9 +1,11 @@
 package com.traceback.api.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.traceback.api.dto.ClaimResponseDTO;
 import com.traceback.api.entity.Claim;
 import com.traceback.api.entity.Item;
 import com.traceback.api.entity.User;
@@ -90,5 +92,50 @@ public class ClaimService {
         }
 
         return claimRepository.save(claim);
+    }
+    
+//    public List<Claim> getClaimsByLoserId(Long loserId) {
+//        return claimRepository.findByLoserId(loserId);
+//    }
+    
+    public List<ClaimResponseDTO> getClaimsByLoserId(Long loserId) {
+        List<Claim> claims = claimRepository.findByLoserId(loserId);
+        
+        // Map the entities to our DTOs so the frontend gets 'finderName' and 'itemTitle'
+        return claims.stream()
+                     .map(this::mapToDTO) // Using the same mapping function we wrote earlier
+                     .collect(Collectors.toList());
+    }
+    
+//    public List<Claim> getClaimsForFinder(Long finderId) {
+//        return claimRepository.findByItem_Finder_Id(finderId);
+//    }
+    
+    
+    public List<ClaimResponseDTO> getClaimsForFinder(Long finderId) {
+        List<Claim> claims = claimRepository.findByItem_Finder_Id(finderId);
+
+        // Convert List<Claim> to List<ClaimResponseDTO>
+        return claims.stream().map(this::mapToDTO).collect(Collectors.toList());
+    }
+
+    private ClaimResponseDTO mapToDTO(Claim claim) {
+        return ClaimResponseDTO.builder()
+                .id(claim.getId())
+                .proofDescription(claim.getProofDescription())
+                .status(claim.getStatus())
+                .createdAt(claim.getCreatedAt())
+                // Item details
+                .itemId(claim.getItem().getId())
+                .itemTitle(claim.getItem().getTitle())
+                .itemImageUrl(claim.getItem().getImageUrl())
+                .proofDescription(claim.getItem().getDescription())
+                // Loser (Claimant) details - using .getName() from your User entity
+                .loserId(claim.getLoser().getId())
+                .loserName(claim.getLoser().getName()) 
+                // Finder details
+                .finderId(claim.getItem().getFinder().getId())
+                .finderName(claim.getItem().getFinder().getName())
+                .build();
     }
 }

@@ -39,9 +39,24 @@ public class ItemService {
         return itemRepository.findByStatus("UNCLAIMED");
     }
 
-    // 3. Search items by keyword
-    public List<Item> searchUnclaimedItems(String keyword) {
-        // This uses the cool method we wrote in the Repository!
-        return itemRepository.findByTitleContainingIgnoreCaseOrLocationContainingIgnoreCase(keyword, keyword);
+    public List<Item> searchUnclaimedItems(String keyword, String category) {
+        // If "All" is selected, just use the keyword search logic
+        if (category == null || category.equalsIgnoreCase("All")) {
+            return itemRepository.findByTitleContainingIgnoreCaseOrLocationContainingIgnoreCase(keyword, keyword);
+        }
+        
+        // Otherwise, filter by both category and keyword
+        return itemRepository.findByCategoryAndTitleContainingIgnoreCaseOrCategoryAndLocationContainingIgnoreCase(
+            category, keyword, category, keyword
+        );
+    }
+ // 4. Get a single item by its ID
+    public Item getItemById(Long id) {
+        return itemRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Item not found with ID: " + id));
+    }
+    
+    public List<Item> getItemsByFinderId(Long finderId) {
+        return itemRepository.findByFinderId(finderId);
     }
 }

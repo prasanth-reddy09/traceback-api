@@ -39,10 +39,29 @@ public class ItemController {
         return ResponseEntity.ok(itemService.getAllUnclaimedItems());
     }
 
-    // 3. Search for items
-    // Example URL: GET http://localhost:8080/api/items/search?keyword=macbook
-    @GetMapping("/search")
-    public ResponseEntity<List<Item>> searchItems(@RequestParam String keyword) {
-        return ResponseEntity.ok(itemService.searchUnclaimedItems(keyword));
+   
+ // 3. Search for items with category support
+ // Example URL: GET http://localhost:8080/api/items/search?keyword=keys&category=Electronics
+ @GetMapping("/search")
+ public ResponseEntity<List<Item>> searchItems(
+         @RequestParam(required = false) String keyword,
+         @RequestParam(required = false) String category) {
+     
+     // Default keyword to empty string if null to avoid JPA errors
+     String searchKeyword = (keyword == null) ? "" : keyword;
+     
+     return ResponseEntity.ok(itemService.searchUnclaimedItems(searchKeyword, category));
+ }
+    
+ // 4. Get a single item by ID
+    // Example URL: GET http://localhost:8080/api/items/1
+    @GetMapping("/{id}")
+    public ResponseEntity<Item> getItemById(@PathVariable Long id) {
+        return ResponseEntity.ok(itemService.getItemById(id));
+    }
+    
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<Item>> getItemsByUser(@PathVariable Long userId) {
+        return ResponseEntity.ok(itemService.getItemsByFinderId(userId));
     }
 }
