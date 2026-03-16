@@ -12,12 +12,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "users")
-@Data
+@Getter 
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -43,5 +45,20 @@ public class User {
 	@CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
+	
+////	@JsonManagedReference
+//	@JsonIgnore
+//	@OneToMany(mappedBy = "finder", cascade = CascadeType.ALL, orphanRemoval = true)
+//	private List<Item> reportedItems;
+//
+////	@JsonManagedReference
+//	@JsonIgnore
+//	@OneToMany(mappedBy = "loser", cascade = CascadeType.ALL, orphanRemoval = true)
+//	private List<Claim> myClaims;
+	
+	@Override
+    public String toString() {
+        return "User(id=" + id + ", name=" + name + ", email=" + email + ")";
+    }
 	
 }

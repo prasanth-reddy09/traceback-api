@@ -17,9 +17,8 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtUtil jwtUtil; // <-- Inject the Keycard Machine!
+    private final JwtUtil jwtUtil; 
 
-    // 1. Register Method (Leave this exactly as you had it!)
     public User registerUser(User user) {
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
             throw new RuntimeException("A user with this email already exists!");
@@ -27,25 +26,19 @@ public class UserService {
         String encodedPassword = passwordEncoder.encode(user.getPasswordHash());
         user.setPasswordHash(encodedPassword);
         
-        System.out.println(encodedPassword + " hello");
         return userRepository.save(user);
     }
 
-    // 2. NEW: Login Method
     public AuthResponse loginUser(LoginRequest request) {
-        // Find the user by email
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("Invalid email or password!"));
 
-        // 🔒 SECURITY: Use Bcrypt to check if the raw password matches the database hash
         if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
             throw new RuntimeException("Invalid email or password!");
         }
 
-        // Generate the shiny new token!
         String token = jwtUtil.generateToken(user.getEmail());
 
-        // Return the token and user details to the frontend
         return AuthResponse.builder()
                 .token(token)
                 .userId(user.getId())

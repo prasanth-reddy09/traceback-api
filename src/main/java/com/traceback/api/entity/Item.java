@@ -53,9 +53,18 @@ public class Item {
    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "finder_id", nullable = false)
+//    @JsonBackReference
     private User finder;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
+    
+//    
+//    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
+////    @JsonManagedReference 
+//    @JsonIgnoreProperties("item")
+//    private List<Claim> claims;
+    
+
 }

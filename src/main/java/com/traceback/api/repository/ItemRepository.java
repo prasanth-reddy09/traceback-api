@@ -2,6 +2,8 @@ package com.traceback.api.repository;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -9,6 +11,16 @@ import com.traceback.api.entity.Item;
 
 @Repository
 public interface ItemRepository extends JpaRepository<Item, Long>{
+	
+//	// "JOIN FETCH" tells Hibernate: "Do not run separate queries for these!"
+//    @Query("SELECT i FROM Item i " +
+//           "LEFT JOIN FETCH i.finder " + // Get the finder details
+//           "LEFT JOIN FETCH i.claims c " + // Get the claims
+//           "LEFT JOIN FETCH c.messages " + // Get the messages inside those claims
+//           "WHERE i.id = :id")
+//    Optional<Item> findItemWithDetails(@Param("id") Long id);
+	
+	Page<Item> findByStatus(String status, Pageable pageable);
 
 	// 1. Find all items that are currently "UNCLAIMED"
     List<Item> findByStatus(String status);

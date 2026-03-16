@@ -44,8 +44,7 @@ public class ClaimController {
         return ResponseEntity.ok(claimService.getClaimsForItem(itemId));
     }
     
- // 3. Resolve a claim (Approve or Reject)
-    // Example URL: PUT http://localhost:8080/api/claims/1/resolve?finderId=1&action=APPROVE
+   // 3. Resolve a claim (Approve or Reject)
     @PutMapping("/{claimId}/resolve")
     public ResponseEntity<Claim> resolveClaim(
             @PathVariable Long claimId,

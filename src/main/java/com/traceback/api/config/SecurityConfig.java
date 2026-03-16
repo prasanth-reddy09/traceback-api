@@ -9,37 +9,37 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter; // <-- New import
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import com.traceback.api.security.JwtAuthenticationFilter; // <-- New import
+import com.traceback.api.security.JwtAuthenticationFilter;
 
-import lombok.RequiredArgsConstructor; // <-- New import
+import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
-@RequiredArgsConstructor // <-- Added Lombok constructor for injection
+@RequiredArgsConstructor 
 public class SecurityConfig {
 
-    private final JwtAuthenticationFilter jwtAuthFilter; // <-- Inject our new filter!
+    private final JwtAuthenticationFilter jwtAuthFilter; 
 
     
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        // Allow the Next.js frontend
+       
         configuration.setAllowedOrigins(List.of("http://localhost:3000","https://traceback-frontend-one.vercel.app")); 
-        // Allow all standard HTTP methods
+        
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        // Allow all headers (like our Authorization Bearer token!)
+        
         configuration.setAllowedHeaders(List.of("*"));
-        // Allow credentials (important for tokens and cookies)
+       
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        // Apply these rules to every single API endpoint
+        
         source.registerCorsConfiguration("/**", configuration); 
         return source;
     }
@@ -52,14 +52,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .cors(cors -> cors.configurationSource(corsConfigurationSource())) // <-- ADD THIS LINE!
+            .cors(cors -> cors.configurationSource(corsConfigurationSource())) 
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/users/register", "/api/users/login").permitAll()
+                .requestMatchers("/api/users/register", "/api/users/login", "/error").permitAll()
                 .requestMatchers("/ws/**").permitAll()
                 .anyRequest().authenticated()
             )
-            // 🚨 NEW: Tell Spring to run OUR filter before its default authentication filter
+          
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

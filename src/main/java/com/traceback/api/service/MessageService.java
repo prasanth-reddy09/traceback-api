@@ -22,7 +22,7 @@ public class MessageService {
     private final MessageRepository messageRepository;
     private final ClaimRepository claimRepository;
     private final UserRepository userRepository;
-    private final SimpMessagingTemplate messagingTemplate; // <-- Inject it here!
+    private final SimpMessagingTemplate messagingTemplate; 
 
     public Message sendMessage(Long claimId, Long senderId, String content) {
         Claim claim = claimRepository.findById(claimId)
@@ -31,7 +31,7 @@ public class MessageService {
         User sender = userRepository.findById(senderId)
                 .orElseThrow(() -> new RuntimeException("User not found!"));
 
-        // Security check
+        
         Long finderId = claim.getItem().getFinder().getId();
         Long loserId = claim.getLoser().getId();
 
@@ -39,7 +39,6 @@ public class MessageService {
             throw new RuntimeException("Unauthorized: You are not part of this private claim.");
         }
 
-        // 1. Save to the database
         Message message = Message.builder()
                 .claim(claim)
                 .sender(sender)
@@ -47,7 +46,6 @@ public class MessageService {
                 .build();
         Message savedMessage = messageRepository.save(message);
 
-        // 2. Build the lightweight DTO
         MessageDto messageDto = MessageDto.builder()
                 .id(savedMessage.getId())
                 .claimId(claim.getId())
@@ -57,8 +55,6 @@ public class MessageService {
                 .sentAt(savedMessage.getSentAt())
                 .build();
 
-        // 3. BROADCAST TO THE RADIO STATION! 📻
-        // Anyone listening to "/topic/chat/{claimId}" will instantly get this JSON.
         messagingTemplate.convertAndSend("/topic/chat/" + claimId, messageDto);
 
         return savedMessage;

@@ -9,9 +9,7 @@ import org.springframework.context.annotation.Configuration;
 
 import com.cloudinary.Cloudinary;
 
-/**
- * Initializes the Cloudinary SDK using credentials from application.properties.
- */
+
 @Configuration
 public class CloudinaryConfig {
 

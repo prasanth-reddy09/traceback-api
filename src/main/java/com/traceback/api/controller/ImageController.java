@@ -18,7 +18,7 @@ public class ImageController {
 
     private final ImageUploadService imageUploadService;
 
-    // Example URL: GET http://localhost:8080/api/images/generate-signature
+   
     @GetMapping("/generate-signature")
     public ResponseEntity<Map<String, Object>> getSignature() {
         return ResponseEntity.ok(imageUploadService.generateSignature());

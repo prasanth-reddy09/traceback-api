@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -19,10 +21,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/**
- * Represents the 'claims' table.
- * Created when a user tries to prove ownership of a found item.
- */
 @Getter
 @Setter
 @NoArgsConstructor
@@ -36,7 +34,6 @@ public class Claim {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // The user's explanation of why it is theirs (e.g., "It has a scratch on the left side")
     @Column(name = "proof_description", columnDefinition = "TEXT", nullable = false)
     private String proofDescription;
 
@@ -49,12 +46,20 @@ public class Claim {
     // 1. Which item is being claimed?
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id", nullable = false)
+//    @JsonBackReference
+    @JsonIgnoreProperties({"claims", "finder"})
     private Item item;
 
     // 2. Which user is making the claim? (The Loser)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "loser_id", nullable = false)
     private User loser;
+    
+//    @OneToMany(mappedBy = "claim", cascade = CascadeType.ALL, orphanRemoval = true)
+//    @JsonManagedReference
+//    private List<Message> messages;
+    
+
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)

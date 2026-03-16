@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -19,10 +21,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/**
- * Represents the 'messages' table.
- * Handles the private chat between a Finder and a Loser inside a specific Claim.
- */
 @Getter
 @Setter
 @NoArgsConstructor
@@ -36,7 +34,6 @@ public class Message {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // The actual text of the message
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
@@ -45,12 +42,15 @@ public class Message {
     // 1. Which claim (chat room) does this message belong to?
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "claim_id", nullable = false)
+    @JsonBackReference
     private Claim claim;
 
     // 2. Who sent this message? (Could be the Finder OR the Loser)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sender_id", nullable = false)
     private User sender;
+    
+
 
     // Exactly when the message was sent
     @CreationTimestamp

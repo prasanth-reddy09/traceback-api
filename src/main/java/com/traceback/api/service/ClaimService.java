@@ -65,7 +65,6 @@ public class ClaimService {
                 
         Item item = claim.getItem();
 
-        // 🛡️ SECURITY CHECK: Only the user who FOUND the item can approve/reject claims for it.
         if (!item.getFinder().getId().equals(finderId)) {
             throw new RuntimeException("Unauthorized: Only the finder can resolve this claim.");
         }
