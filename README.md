@@ -6,18 +6,17 @@ Traceback is a professional lost-and-found ecosystem that connects finders and l
 
 ## 🔗 Project Links
 * **Live Application:** [View Live Demo](PASTE_YOUR_VERCEL_URL_HERE)
-* **Backend API:** [API Documentation](PASTE_YOUR_RENDER_URL_HERE)
 
 ---
 
 ## 📸 Project Previews
 
 ### 🌐 Landing Page
-![Landing Page](PASTE_LINK_TO_LANDING_PAGE_SCREENSHOT_HERE)
+![Landing Page](./imaages/landing.png)
 
 ### 📊 Database Architecture
 This schema handles the relationships between Users, Items, Claims, and Real-time Messages.
-![Database Schema](PASTE_LINK_TO_SCHEMA_SCREENSHOT_HERE)
+![Database Schema](./imaages/schema.png)
 
 ---
 
